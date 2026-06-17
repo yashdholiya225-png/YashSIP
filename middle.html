@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medium Clone</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#fff;
+}
+
+/* NAVBAR */
+
+.navbar{
+    height:70px;
+    border-bottom:1px solid #e6e6e6;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 25px;
+    position:sticky;
+    top:0;
+    background:white;
+}
+
+.nav-left{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.logo{
+    font-size:42px;
+    font-family:Georgia, serif;
+    font-weight:bold;
+}
+
+.search-box{
+    background:#f2f2f2;
+    padding:10px 15px;
+    border-radius:30px;
+}
+
+.search-box input{
+    border:none;
+    background:transparent;
+    outline:none;
+    width:200px;
+}
+
+.nav-right{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.avatar{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:#0f766e;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+}
+
+/* MAIN LAYOUT */
+
+.container{
+    display:grid;
+    grid-template-columns:250px 1fr 320px;
+    min-height:calc(100vh - 70px);
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    border-right:1px solid #e6e6e6;
+    padding:30px;
+}
+
+.menu-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:25px;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.menu-item:hover{
+    color:#1a8917;
+}
+
+.divider{
+    border-top:1px solid #e6e6e6;
+    margin:25px 0;
+}
+
+/* FEED */
+
+.feed{
+    padding:30px;
+}
+
+.tabs{
+    display:flex;
+    gap:30px;
+    border-bottom:1px solid #e6e6e6;
+    padding-bottom:15px;
+    margin-bottom:30px;
+}
+
+.tabs span{
+    cursor:pointer;
+}
+
+.article{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    padding-bottom:30px;
+    margin-bottom:30px;
+    border-bottom:1px solid #e6e6e6;
+}
+
+.article-content{
+    flex:1;
+}
+
+.author{
+    font-size:14px;
+    color:#666;
+}
+
+.article h2{
+    margin:12px 0;
+    font-size:32px;
+}
+
+.article p{
+    color:#666;
+    margin-bottom:15px;
+}
+
+.stats{
+    color:#777;
+    font-size:14px;
+}
+
+.article img{
+    width:180px;
+    height:120px;
+    object-fit:cover;
+    border-radius:5px;
+}
+
+/* RIGHT SIDEBAR */
+
+.right-sidebar{
+    border-left:1px solid #e6e6e6;
+    padding:30px;
+}
+
+.right-sidebar h3{
+    margin-bottom:25px;
+}
+
+.pick{
+    margin-bottom:25px;
+}
+
+.pick-author{
+    font-size:14px;
+    color:#666;
+    margin-bottom:5px;
+}
+
+.pick-title{
+    font-size:20px;
+    font-weight:bold;
+}
+
+@media(max-width:1000px){
+
+    .container{
+        grid-template-columns:1fr;
+    }
+
+    .sidebar,
+    .right-sidebar{
+        display:none;
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+
+    <div class="nav-left">
+        <i class="fas fa-bars"></i>
+
+        <div class="logo">Medium</div>
+
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search">
+        </div>
+    </div>
+
+    <div class="nav-right">
+        <i class="fas fa-pen"></i>
+        <span>Write</span>
+
+        <i class="far fa-bell"></i>
+
+        <div class="avatar">V</div>
+    </div>
+
+</nav>
+
+<div class="container">
+
+    <!-- LEFT SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="menu-item">
+            <i class="fas fa-house"></i>
+            <span>Home</span>
+        </div>
+
+        <div class="menu-item">
+            <i class="fas fa-bookmark"></i>
+            <span>Library</span>
+        </div>
+
+        <div class="menu-item">
+            <i class="far fa-user"></i>
+            <span>Profile</span>
+        </div>
+
+        <div class="menu-item">
+            <i class="far fa-file-lines"></i>
+            <span>Stories</span>
+        </div>
+
+        <div class="menu-item">
+            <i class="fas fa-chart-column"></i>
+            <span>Stats</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="menu-item">
+            <i class="fas fa-users"></i>
+            <span>Following</span>
+        </div>
+
+    </aside>
+
+    <!-- MAIN FEED -->
+
+    <main class="feed">
+
+        <div class="tabs">
+            <span><strong>For You</strong></span>
+            <span>Featured</span>
+        </div>
+
+        <div class="article">
+
+            <div class="article-content">
+
+                <div class="author">
+                    Shruti Mangawa • Dec 11, 2025
+                </div>
+
+                <h2>
+                    Why Reading More Books Wasn't Making Me Smarter
+                </h2>
+
+                <p>
+                    I realized I had been reading wrong my entire life.
+                </p>
+
+                <div class="stats">
+                    ⭐ 17.6K &nbsp;&nbsp; 💬 837
+                </div>
+
+            </div>
+
+            <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600"
+            alt="Books">
+
+        </div>
+
+        <div class="article">
+
+            <div class="article-content">
+
+                <div class="author">
+                    Desiree Peralta • Mar 9
+                </div>
+
+                <h2>
+                    Women Are Basically Reading Porn
+                </h2>
+
+                <p>
+                    A surprising look at the rise of romantic fiction.
+                </p>
+
+                <div class="stats">
+                    ⭐ 12.4K &nbsp;&nbsp; 💬 421
+                </div>
+
+            </div>
+
+            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600"
+            alt="Book">
+
+        </div>
+
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+
+    <aside class="right-sidebar">
+
+        <h3>Staff Picks</h3>
+
+        <div class="pick">
+            <div class="pick-author">
+                KYO • Tokyo
+            </div>
+
+            <div class="pick-title">
+                The Carp Flies for Boys. The Doll Sits for Girls.
+            </div>
+        </div>
+
+        <div class="pick">
+            <div class="pick-author">
+                Devin Bambrick
+            </div>
+
+            <div class="pick-title">
+                Gatori Fishing in America
+            </div>
+        </div>
+
+        <div class="pick">
+            <div class="pick-author">
+                John DeVore
+            </div>
+
+            <div class="pick-title">
+                Cigarettes are bad. I miss them.
+            </div>
+        </div>
+
+    </aside>
+
+</div>
+
+</body>
+</html>
