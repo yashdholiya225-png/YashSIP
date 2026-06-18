@@ -7,7 +7,7 @@
 //     }
 // }, 1000);
 
-const time2 = setInterval(() =>{
+const time = setInterval(() =>{
     console.log = new date();
-    console.log(now.tolocaletimestring());
+    console.log(now.tolocaltimestring());
 }, 2000)

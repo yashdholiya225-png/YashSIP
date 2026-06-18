@@ -2,6 +2,7 @@ const Numbers = [1, 2, 3,];
 const double = Numbers.map(num => {
     return num * 2;
 });
+console.log((""))
 
 const ages = [10, 20, 30,];
 const adults = ages.filter(

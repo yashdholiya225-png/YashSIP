@@ -1,22 +1,19 @@
-function sunstone(){
-    console.log("welcome")
+function sunstone1 () {
+    console.log("welcome");
 }
 sunstone();
 
-
-function sunstone(batch){
-    console.log('welcome back ${BATCH} BATCH')
+function sunstoneBatch2 (batch) {
+    console.log(`welcome back ${batch} BATCH`);
 }
-sunstone(2026);
+sunstoneBatch(2026);
 
-Functionsunstone(Course,batch){
-    console.log('welcome back ${course}${batch} batch')
+function sunstoneCourse3(course, batch) {
+    console.log(`welcome back ${course} ${batch} batch`);
 }
-sunstone("BCA",2026)
+sunstoneCourse("BCA", 2026);
 
-//return type function
-
-functiontotalstudent(BCA, BTECH, BBA, BSC){
-    return BCA + BTECH + BBA + BSC
+function totalStudent(BCA, BTECH, BBA, BSC) {
+    return BCA + BTECH + BBA + BSC;
 }
-console.log(totalstudent(100, 200, 50, 300));
+console.log("Total Students =", totalStudent(100, 200, 50, 300));
