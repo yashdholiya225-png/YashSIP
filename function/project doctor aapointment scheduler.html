@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediQ — Book a doctor in under two minutes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  :root{
+    --paper:#F6F4EF;
+    --paper-dim:#EFEBE2;
+    --ink:#1C2420;
+    --ink-soft:#566059;
+    --teal:#2B6F62;
+    --teal-deep:#1F4F46;
+    --coral:#E1633F;
+    --coral-deep:#2da1c4;
+    --sage:#E3EAE3;
+    --line: rgba(28,36,32,0.12);
+    --radius: 14px;
+    --shadow: 0 18px 40px -22px rgba(28,36,32,0.35);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{
+    font-family:'Fraunces', Georgia, serif;
+    font-weight:600;
+    line-height:1.08;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  p{margin:0;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;}
+  .mono{font-family:'Space Mono', monospace;}
+
+  :focus-visible{
+    outline:2px solid var(--coral);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+  @media  (max-width:640px){ .wrap{padding:0 20px;} }
+
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--teal-deep);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px;height:7px;border-radius:50%;
+    background:var(--coral);
+    display:inline-block;
+    flex:none;
+  }
+
+  nav{
+    position:sticky;top:0;z-index:60;
+    background:rgba(246,244,239,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1180px;margin:0 auto;padding:18px 32px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .logo{
+    font-family:'Fraunces', serif;font-weight:600;font-size:22px;
+    display:flex;align-items:center;gap:9px;
+  }
+  .logo-mark{
+    width:26px;height:26px;flex:none;
+  }
+  .nav-links{
+    display:flex;gap:34px;align-items:center;
+    font-size:14.5px;font-weight:500;color:var(--ink-soft);
+  }
+  .nav-links a{transition:color .2s;}
+  .nav-links a:hover{color:var(--teal-deep);}
+  .nav-cta{
+    background:var(--ink);color:var(--paper);
+    padding:10px 20px;border-radius:30px;border:none;
+    font-size:14px;font-weight:600;
+    transition:transform .25s, background .25s;
+  }
+  .nav-cta:hover{background:var(--teal-deep);transform:translateY(-1px);}
+  .nav-toggle{display:none;background:none;border:none;padding:6px;}
+  .nav-toggle span{display:block;width:22px;height:2px;background:var(--ink);margin:5px 0;}
+
+  @media (max-width:760px){
+    .nav-links{
+      position:absolute;top:100%;left:0;right:0;
+      background:var(--paper);
+      flex-direction:column;align-items:flex-start;
+      padding:18px 20px 26px;
+      border-bottom:1px solid var(--line);
+      gap:18px;
+      display:none;
+    }
+    .nav-links.open{display:flex;}
+    .nav-toggle{display:block;}
+  }
+
+  .hero{
+    position:relative;
+    padding:64px 0 0;
+    overflow:hidden;
+  }
+  .hero-inner{
+    display:grid;grid-template-columns:1.05fr 0.95fr;
+    gap:40px;align-items:center;
+    min-height:520px;
+  }
+  .hero h1{
+    font-size:clamp(34px,5vw,58px);
+    margin:18px 0 22px;
+  }
+  .hero h1 em{
+    font-style:italic;color:var(--teal-deep);
+  }
+  .hero p.lede{
+    font-size:18px;line-height:1.55;color:var(--ink-soft);
+    max-width:460px;margin-bottom:30px;
+  }
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+  .btn-primary{
+    background:var(--coral);color:#fff;border:none;
+    padding:15px 26px;border-radius:30px;font-size:15px;font-weight:600;
+    box-shadow:0 14px 26px -12px rgba(225,99,63,0.55);
+    transition:transform .22s, box-shadow .22s, background .22s;
+  }
+  .btn-primary:hover{background:var(--coral-deep);transform:translateY(-2px);}
+  .btn-ghost{
+    background:none;border:1.5px solid var(--line);color:var(--ink);
+    padding:14px 22px;border-radius:30px;font-size:15px;font-weight:600;
+    transition:border-color .2s, background .2s;
+  }
+  .btn-ghost:hover{border-color:var(--teal); background:var(--sage);}
+
+  .hero-canvas-wrap{
+    position:relative;height:440px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  #hero-canvas{width:100%;height:100%;display:block;}
+  .hero-canvas-fallback{
+    display:none;
+    position:absolute;inset:0;
+    align-items:center;justify-content:center;
+  }
+  .hero-canvas-fallback svg{width:70%;max-width:280px;opacity:0.85;}
+
+  .pulse-divider{
+    width:100%;height:46px;margin-top:18px;
+    opacity:0.55;
+  }
+  .pulse-divider path{
+    fill:none;stroke:var(--teal);stroke-width:1.6;
+    stroke-dasharray:600;stroke-dashoffset:600;
+    animation:drawline 2.6s ease-out forwards .3s;
+  }
+  @keyframes drawline{to{stroke-dashoffset:0;}}
+
+  @media (max-width:880px){
+    .hero-inner{grid-template-columns:1fr;}
+    .hero-canvas-wrap{height:300px;order:-1;}
+  }
+
+  .stats{
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    background:var(--paper-dim);
+  }
+  .stats-inner{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    text-align:center;
+  }
+  .stat{
+    padding:38px 18px;
+    border-left:1px solid var(--line);
+  }
+  .stat:first-child{border-left:none;}
+  .stat .num{
+    font-family:'Fraunces',serif;font-size:clamp(28px,3.4vw,40px);
+    color:var(--teal-deep);font-weight:600;
+  }
+  .stat .label{
+    font-size:13px;color:var(--ink-soft);margin-top:6px;
+    letter-spacing:0.02em;
+  }
+  @media (max-width:640px){
+    .stats-inner{grid-template-columns:1fr;}
+    .stat{border-left:none;border-top:1px solid var(--line);}
+    .stat:first-child{border-top:none;}
+  }
+
+  section{padding:84px 0;}
+  .sec-head{max-width:560px;margin-bottom:48px;}
+  .sec-head h2{font-size:clamp(26px,3.4vw,38px);margin-top:14px;}
+  .sec-head p{color:var(--ink-soft);font-size:16px;margin-top:12px;line-height:1.55;}
+
+  .steps3{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:26px;
+  }
+  .step-card{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 26px;
+  }
+  .step-card .idx{
+    font-family:'Space Mono',monospace;font-size:13px;color:var(--coral);
+    margin-bottom:14px;display:block;
+  }
+  .step-card h3{font-size:19px;margin-bottom:9px;font-weight:600;}
+  .step-card p{color:var(--ink-soft);font-size:14.5px;line-height:1.5;}
+  @media (max-width:880px){.steps3{grid-template-columns:1fr;}}
+
+  .filters{
+    display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;
+  }
+  .chip{
+    border:1.5px solid var(--line);background:#fff;
+    padding:9px 18px;border-radius:30px;font-size:13.5px;font-weight:500;
+    color:var(--ink-soft); transition:all .18s;
+  }
+  .chip.active{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+  .chip:hover{border-color:var(--teal);}
+
+  .doctor-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  }
+  @media (max-width:980px){.doctor-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:640px){.doctor-grid{grid-template-columns:1fr;}}
+
+  .doc-card{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px;perspective:900px;
+    transition:transform .12s ease-out, box-shadow .25s;
+    will-change:transform;
+  }
+  .doc-card:hover{box-shadow:var(--shadow);}
+  .doc-top{display:flex;gap:14px;align-items:center;margin-bottom:16px;}
+  .avatar{
+    width:54px;height:54px;border-radius:50%;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:#fff;
+  }
+  .doc-name{font-size:17px;font-weight:600;font-family:'Fraunces',serif;}
+  .doc-spec{font-size:13px;color:var(--ink-soft);margin-top:2px;}
+  .doc-bio{font-size:14px;color:var(--ink-soft);line-height:1.5;margin-bottom:18px;min-height:42px;}
+  .doc-meta{
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:13px;color:var(--ink-soft);margin-bottom:18px;
+    font-family:'Space Mono',monospace;
+  }
+  .doc-meta b{color:var(--ink);font-family:'Space Mono',monospace;}
+  .book-btn{
+    width:100%;background:var(--ink);color:#fff;border:none;
+    padding:12px;border-radius:10px;font-size:14.5px;font-weight:600;
+    transition:background .2s;
+  }
+  .book-btn:hover{background:var(--teal-deep);}
+
+  .booking-section{
+    background:var(--ink);color:var(--paper);
+    display:none;
+  }
+  .booking-section.visible{display:block;}
+  .booking-section .sec-head p{color:#C7CFC9;}
+  .booking-section .eyebrow{color:#9FD8C7;}
+
+  .stepper{
+    display:flex;gap:8px;margin-bottom:36px;font-family:'Space Mono',monospace;font-size:12.5px;
+  }
+  .stepper .pip{
+    flex:1;height:3px;background:rgba(255,255,255,0.18);border-radius:3px;overflow:hidden;position:relative;
+  }
+  .stepper .pip.done, .stepper .pip.active{background:var(--coral);}
+
+  .flip-stage{
+    perspective:1600px;
+    min-height:430px;
+    position:relative;
+  }
+  .flip-panel{
+    position:absolute;inset:0;
+    background:#23302B;
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:18px;
+    padding:38px;
+    transform:rotateY(90deg);
+    opacity:0;
+    pointer-events:none;
+    transition:transform .5s cubic-bezier(.2,.7,.2,1), opacity .35s ease;
+    backface-visibility:hidden;
+  }
+  .flip-panel.active{
+    transform:rotateY(0deg);
+    opacity:1;
+    pointer-events:auto;
+  }
+  .flip-panel.exit-left{transform:rotateY(-90deg);opacity:0;}
+
+  @media (prefers-reduced-motion: reduce){
+    .flip-panel{transition:opacity .25s ease;transform:none !important;}
+  }
+
+  .panel-label{
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.1em;
+    text-transform:uppercase;color:var(--coral);margin-bottom:8px;display:block;
+  }
+  .panel-title{font-family:'Fraunces',serif;font-size:26px;font-weight:600;margin-bottom:24px;}
+
+  .recap-card{
+    display:flex;gap:16px;align-items:center;background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:18px 20px;margin-bottom:10px;
+  }
+  .recap-card .avatar{font-size:16px;width:46px;height:46px;}
+  .recap-card .meta-line{font-size:13px;color:#A9B3AD;margin-top:3px;font-family:'Space Mono',monospace;}
+  .link-btn{
+    background:none;border:none;color:#9FD8C7;font-size:13.5px;font-weight:600;
+    text-decoration:underline;text-underline-offset:3px;margin-top:14px;display:inline-block;
+  }
+
+  .date-grid{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:8px;
+  }
+  .date-cell{
+    background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+    border-radius:10px;padding:10px 4px;text-align:center;font-size:12.5px;
+    transition:all .15s;
+  }
+  .date-cell .dname{display:block;color:#A9B3AD;font-size:10.5px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;}
+  .date-cell .dnum{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;}
+  .date-cell:hover{border-color:var(--coral);}
+  .date-cell.selected{background:var(--coral);border-color:var(--coral);}
+  .date-cell.selected .dname{color:#fff;}
+  @media (max-width:640px){.date-grid{grid-template-columns:repeat(4,1fr);}}
+
+  .slot-group{margin-bottom:22px;}
+  .slot-group h4{
+    font-size:12.5px;text-transform:uppercase;letter-spacing:0.08em;color:#A9B3AD;
+    margin-bottom:10px;font-weight:600;
+  }
+  .slot-row{display:flex;gap:9px;flex-wrap:wrap;}
+  .slot-chip{
+    font-family:'Space Mono',monospace;font-size:13px;
+    background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);
+    border-radius:8px;padding:9px 14px;color:var(--paper);transition:all .15s;
+  }
+  .slot-chip:hover:not(:disabled){border-color:var(--coral);}
+  .slot-chip.selected{background:var(--coral);border-color:var(--coral);}
+  .slot-chip:disabled{opacity:0.3;text-decoration:line-through;cursor:not-allowed;}
+
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .form-grid .full{grid-column:1/-1;}
+  .field label{display:block;font-size:12.5px;color:#A9B3AD;margin-bottom:7px;font-weight:600;letter-spacing:0.02em;}
+  .field input, .field select, .field textarea{
+    width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);
+    border-radius:9px;padding:11px 13px;color:var(--paper);font-size:14.5px;font-family:'Inter',sans-serif;
+  }
+  .field textarea{resize:vertical;min-height:70px;}
+  .field input::placeholder, .field textarea::placeholder{color:#7B8780;}
+  @media (max-width:640px){.form-grid{grid-template-columns:1fr;}}
+
+  .flip-nav{display:flex;justify-content:space-between;align-items:center;margin-top:30px;}
+  .err-text{color:#F0A07E;font-size:13px;margin-top:10px;display:none;}
+  .err-text.show{display:block;}
+
+  .btn-coral{
+    background:var(--coral);color:#fff;border:none;padding:13px 26px;border-radius:30px;
+    font-size:14.5px;font-weight:600;transition:background .2s;
+  }
+  .btn-coral:hover{background:var(--coral-deep);}
+  .btn-coral:disabled{opacity:0.4;cursor:not-allowed;}
+  .btn-outline-light{
+    background:none;color:var(--paper);border:1px solid rgba(255,255,255,0.25);
+    padding:12px 22px;border-radius:30px;font-size:14.5px;font-weight:600;
+  }
+  .btn-outline-light:hover{border-color:rgba(255,255,255,0.6);}
+
+  .confirm-wrap{text-align:center;padding:10px 0;}
+  .confirm-check{
+    width:64px;height:64px;border-radius:50%;background:var(--teal);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 22px;
+  }
+  .confirm-id{font-family:'Space Mono',monospace;font-size:14px;color:#9FD8C7;letter-spacing:0.04em;}
+  .confirm-summary{
+    text-align:left;max-width:380px;margin:26px auto;background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px 22px;
+  }
+  .confirm-summary .row{display:flex;justify-content:space-between;font-size:14px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.08);}
+  .confirm-summary .row:last-child{border-bottom:none;}
+  .confirm-summary .row span:first-child{color:#A9B3AD;}
+  .confirm-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px;}
+
+  .appt-list{display:flex;flex-direction:column;gap:14px;}
+  .appt-empty{
+    border:1.5px dashed var(--line);border-radius:var(--radius);
+    padding:46px 24px;text-align:center;color:var(--ink-soft);font-size:14.5px;
+  }
+  .appt-row{
+    display:flex;align-items:center;gap:18px;background:#fff;border:1px solid var(--line);
+    border-radius:12px;padding:18px 22px;flex-wrap:wrap;
+  }
+  .appt-row .avatar{width:44px;height:44px;font-size:14px;}
+  .appt-info{flex:1;min-width:200px;}
+  .appt-info .name{font-weight:600;font-size:15px;}
+  .appt-info .meta{font-size:13px;color:var(--ink-soft);margin-top:3px;font-family:'Space Mono',monospace;}
+  .appt-badge{
+    font-family:'Space Mono',monospace;font-size:11.5px;background:var(--sage);color:var(--teal-deep);
+    padding:5px 12px;border-radius:20px;
+  }
+  .cancel-btn{
+    background:none;border:1px solid var(--line);color:var(--ink-soft);padding:8px 16px;
+    border-radius:20px;font-size:13px;font-weight:600;transition:all .2s;
+  }
+  .cancel-btn:hover{border-color:var(--coral);color:var(--coral-deep);}
+
+  footer{
+    border-top:1px solid var(--line);padding:46px 0 36px;
+  }
+  .footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+  .footer-inner .logo{font-size:18px;}
+  .footer-note{font-size:13px;color:var(--ink-soft);}
+  @media (max-width:640px){.footer-inner{flex-direction:column;align-items:flex-start;}}
+
+  .toast{
+    position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:var(--paper);padding:13px 24px;border-radius:30px;
+    font-size:14px;font-weight:500;box-shadow:var(--shadow);
+    opacity:0;transition:opacity .3s, transform .3s;pointer-events:none;z-index:100;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">
+      <svg class="logo-mark" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="12" stroke="#2B6F62" stroke-width="1.6"/><path d="M5 13h4l2-5 4 10 2-5h4" stroke="#E1633F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      MediQ
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <div class="nav-links" id="navLinks">
+      <a href="#how">How it works</a>
+      <a href="#doctors">Doctors</a>
+      <a href="#appointments">My appointments</a>
+      <button class="nav-cta" id="navBookBtn">Book now</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="eyebrow">Doctor appointment scheduler</span>
+      <h1>Your next appointment, <em>mapped out</em> before the kettle boils.</h1>
+      <p class="lede">Search a specialist, see real open slots, and lock in a time — no phone queue, no guessing if they're free.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" id="heroBookBtn">Find a doctor</button>
+        <a href="#how" class="btn-ghost">See how booking works</a>
+      </div>
+    </div>
+    <div class="hero-canvas-wrap">
+      <canvas id="hero-canvas"></canvas>
+      <div class="hero-canvas-fallback" id="heroFallback">
+        <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="none" stroke="#2B6F62" stroke-width="2" opacity="0.5"/><path d="M20 100h35l12-30 24 60 12-30h35" fill="none" stroke="#E1633F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <svg class="pulse-divider" viewBox="0 0 1180 46" preserveAspectRatio="none">
+      <path d="M0 23 H260 L300 5 L335 40 L365 23 H1180" />
+    </svg>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="wrap stats-inner">
+    <div class="stat"><div class="num">6</div><div class="label">specialists across 6 fields</div></div>
+    <div class="stat"><div class="num">&lt;90 sec</div><div class="label">average time to confirm a slot</div></div>
+    <div class="stat"><div class="num">24/7</div><div class="label">slots open for browsing &amp; booking</div></div>
+  </div>
+</div>
+
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">The process</span>
+      <h2>Three steps, in this order, every time.</h2>
+      <p>Booking a doctor only has one correct sequence — who, then when, then you. We kept it to exactly that.</p>
+    </div>
+    <div class="steps3">
+      <div class="step-card">
+        <span class="idx">01 — Search</span>
+        <h3>Pick a specialist</h3>
+        <p>Filter by what's actually wrong, not a directory of every department. Read a real bio before you commit.</p>
+      </div>
+      <div class="step-card">
+        <span class="idx">02 — Choose a slot</span>
+        <h3>See genuine availability</h3>
+        <p>Open times only — nothing greyed out gets shown as bookable, and nothing booked gets shown as open.</p>
+      </div>
+      <div class="step-card">
+        <span class="idx">03 — Confirm</span>
+        <h3>Get your appointment ID</h3>
+        <p>A confirmed slot, a reference number, and a calendar file — done before you'd have finished dialling a clinic.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="doctors" style="background:var(--paper-dim);">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Available now</span>
+      <h2>Find the right doctor</h2>
+      <p>Six specialists, real-time slots. Tap a card to tilt it — then book when you're ready.</p>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="doctor-grid" id="doctorGrid"></div>
+  </div>
+</section>
+
+<section class="booking-section" id="bookingSection">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Booking</span>
+      <h2>Lock in your appointment</h2>
+      <p>Four short steps. Each one flips into the next — nothing to reload, nothing to lose.</p>
+    </div>
+
+    <div class="stepper" id="stepper">
+      <div class="pip" data-step="1"></div>
+      <div class="pip" data-step="2"></div>
+      <div class="pip" data-step="3"></div>
+      <div class="pip" data-step="4"></div>
+    </div>
+
+    <div class="flip-stage" id="flipStage">
+
+      <div class="flip-panel" data-panel="1">
+        <span class="panel-label">Step 1 of 4</span>
+        <h3 class="panel-title">Confirm your doctor</h3>
+        <div id="recapHolder"></div>
+        <a href="#doctors" class="link-btn" id="changeDocBtn">Change doctor</a>
+        <div class="flip-nav">
+          <span></span>
+          <button class="btn-coral" data-next="2">Continue to date →</button>
+        </div>
+      </div>
+
+      <div class="flip-panel" data-panel="2">
+        <span class="panel-label">Step 2 of 4</span>
+        <h3 class="panel-title">Choose a date</h3>
+        <div class="date-grid" id="dateGrid"></div>
+        <p class="err-text" id="dateErr">Pick a date to continue.</p>
+        <div class="flip-nav">
+          <button class="btn-outline-light" data-back="1">← Back</button>
+          <button class="btn-coral" data-next="3">Continue to time →</button>
+        </div>
+      </div>
+
+      <div class="flip-panel" data-panel="3">
+        <span class="panel-label">Step 3 of 4</span>
+        <h3 class="panel-title">Choose a time</h3>
+        <div id="slotHolder"></div>
+        <p class="err-text" id="slotErr">Pick a time slot to continue.</p>
+        <div class="flip-nav">
+          <button class="btn-outline-light" data-back="2">← Back</button>
+          <button class="btn-coral" data-next="4">Continue to your details →</button>
+        </div>
+      </div>
+
+      <div class="flip-panel" data-panel="4">
+        <span class="panel-label">Step 4 of 4</span>
+        <h3 class="panel-title">Your details</h3>
+        <div class="form-grid">
+          <div class="field"><label for="pName">Full name</label><input id="pName" placeholder="Asha Verma"></div>
+          <div class="field"><label for="pAge">Age</label><input id="pAge" type="number" min="0" max="120" placeholder="29"></div>
+          <div class="field"><label for="pPhone">Phone number</label><input id="pPhone" placeholder="98765 43210"></div>
+          <div class="field">
+            <label for="pReason">Reason for visit</label>
+            <select id="pReason">
+              <option>General checkup</option>
+              <option>Follow-up</option>
+              <option>New symptoms</option>
+              <option>Vaccination</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field full"><label for="pNotes">Anything the doctor should know? (optional)</label><textarea id="pNotes" placeholder="Brief notes for the doctor..."></textarea></div>
+        </div>
+        <p class="err-text" id="formErr">Fill in your name, age and phone number to continue.</p>
+        <div class="flip-nav">
+          <button class="btn-outline-light" data-back="3">← Back</button>
+          <button class="btn-coral" id="confirmBtn">Confirm appointment</button>
+        </div>
+      </div>
+
+      <div class="flip-panel" data-panel="5">
+        <div class="confirm-wrap">
+          <div class="confirm-check">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#F6F4EF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="panel-title" style="margin-bottom:6px;">Appointment confirmed</h3>
+          <div class="confirm-id" id="confirmId">MQ-00000</div>
+          <div class="confirm-summary" id="confirmSummary"></div>
+          <div class="confirm-actions">
+            <button class="btn-outline-light" id="icsBtn">Download .ics</button>
+            <button class="btn-coral" id="bookAnotherBtn">Book another</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="appointments">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Your bookings</span>
+      <h2>My appointments</h2>
+      <p>Everything you've confirmed in this session lives here, with a one-tap cancel if plans change.</p>
+    </div>
+    <div class="appt-list" id="apptList"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div class="logo">
+      <svg class="logo-mark" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="12" stroke="#2B6F62" stroke-width="1.6"/><path d="M5 13h4l2-5 4 10 2-5h4" stroke="#E1633F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      MediQ
+    </div>
+    <p class="footer-note">Demo project — appointments are stored only for this browser session.</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+const SPECIALTY_COLORS = {
+  'Cardiologist':'#2B6F62',
+  'General Physician':'#3C7F71',
+  'Dermatologist':'#E1633F',
+  'Orthopedic Surgeon':'#1F4F46',
+  'Pediatrician':'#C44E2D',
+  'Gynecologist':'#4A8579'
+};
+
+const doctors = [
+  {id:'d1', name:'Dr. Ananya Sharma', specialty:'Cardiologist', exp:12, rating:4.8, fee:800, initials:'AS', bio:'Heart health and preventive cardiac care for adults.'},
+  {id:'d2', name:'Dr. Rohan Mehta', specialty:'General Physician', exp:8, rating:4.6, fee:500, initials:'RM', bio:'Everyday illnesses, checkups and chronic condition care.'},
+  {id:'d3', name:'Dr. Priya Nair', specialty:'Dermatologist', exp:6, rating:4.7, fee:700, initials:'PN', bio:'Skin, hair and nail concerns for every age group.'},
+  {id:'d4', name:'Dr. Vikram Singh', specialty:'Orthopedic Surgeon', exp:15, rating:4.9, fee:900, initials:'VS', bio:'Bone, joint and sports injury diagnosis and recovery.'},
+  {id:'d5', name:'Dr. Kavita Iyer', specialty:'Pediatrician', exp:10, rating:4.8, fee:600, initials:'KI', bio:'Child health, from newborn check-ins to teenage years.'},
+  {id:'d6', name:'Dr. Sneha Joshi', specialty:'Gynecologist', exp:9, rating:4.7, fee:750, initials:'SJ', bio:"Women's health, pregnancy care and routine wellness."}
+];
+
+let appointments = [];
+let activeFilter = 'All';
+let selectedDoctor = null;
+let selectedDate = null;
+let selectedSlot = null;
+let currentStep = 1;
+
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+document.getElementById('navBookBtn').addEventListener('click', () => scrollToDoctors());
+document.getElementById('heroBookBtn').addEventListener('click', () => scrollToDoctors());
+function scrollToDoctors(){
+  document.getElementById('doctors').scrollIntoView({behavior:'smooth'});
+}
+
+const specialties = ['All', ...new Set(doctors.map(d => d.specialty))];
+const filtersEl = document.getElementById('filters');
+specialties.forEach(s => {
+  const b = document.createElement('button');
+  b.className = 'chip' + (s === 'All' ? ' active' : '');
+  b.textContent = s;
+  b.addEventListener('click', () => {
+    activeFilter = s;
+    filtersEl.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    b.classList.add('active');
+    renderDoctors();
+  });
+  filtersEl.appendChild(b);
+});
+
+const doctorGrid = document.getElementById('doctorGrid');
+function renderDoctors(){
+  doctorGrid.innerHTML = '';
+  const list = doctors.filter(d => activeFilter === 'All' || d.specialty === activeFilter);
+  list.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'doc-card';
+    card.innerHTML = `
+      <div class="doc-top">
+        <div class="avatar" style="background:${SPECIALTY_COLORS[d.specialty]}">${d.initials}</div>
+        <div>
+          <div class="doc-name">${d.name}</div>
+          <div class="doc-spec">${d.specialty}</div>
+        </div>
+      </div>
+      <p class="doc-bio">${d.bio}</p>
+      <div class="doc-meta">
+        <span>★ <b>${d.rating}</b></span>
+        <span><b>${d.exp}</b> yrs exp</span>
+        <span><b>₹${d.fee}</b> fee</span>
+      </div>
+      <button class="book-btn">Book appointment</button>
+    `;
+    card.querySelector('.book-btn').addEventListener('click', () => startBooking(d));
+    addTilt(card);
+    doctorGrid.appendChild(card);
+  });
+}
+renderDoctors();
+
+function addTilt(card){
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    card.style.transform = `rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-2px)`;
+  });
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+}
+
+const bookingSection = document.getElementById('bookingSection');
+const flipStage = document.getElementById('flipStage');
+const stepperPips = document.querySelectorAll('#stepper .pip');
+
+function startBooking(doc){
+  selectedDoctor = doc;
+  selectedDate = null;
+  selectedSlot = null;
+  renderRecap();
+  renderDateGrid();
+  bookingSection.classList.add('visible');
+  goToPanel(1);
+  setTimeout(() => bookingSection.scrollIntoView({behavior:'smooth'}), 60);
+}
+document.getElementById('changeDocBtn').addEventListener('click', e => {
+  e.preventDefault();
+  bookingSection.classList.remove('visible');
+});
+
+function renderRecap(){
+  document.getElementById('recapHolder').innerHTML = `
+    <div class="recap-card">
+      <div class="avatar" style="background:${SPECIALTY_COLORS[selectedDoctor.specialty]}">${selectedDoctor.initials}</div>
+      <div>
+        <div style="font-weight:600;">${selectedDoctor.name}</div>
+        <div class="meta-line">${selectedDoctor.specialty} · ₹${selectedDoctor.fee} consult fee</div>
+      </div>
+    </div>`;
+}
+
+function renderDateGrid(){
+  const grid = document.getElementById('dateGrid');
+  grid.innerHTML = '';
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const today = new Date();
+  for(let i=0;i<14;i++){
+    const d = new Date(today);
+    d.setDate(today.getDate()+i);
+    const cell = document.createElement('div');
+    cell.className = 'date-cell';
+    cell.innerHTML = `<span class="dname">${i===0?'Today':days[d.getDay()]}</span><span class="dnum">${d.getDate()}</span>`;
+    const key = d.toISOString().slice(0,10);
+    cell.dataset.key = key;
+    cell.dataset.label = `${days[d.getDay()]}, ${d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})}`;
+    cell.addEventListener('click', () => {
+      grid.querySelectorAll('.date-cell').forEach(c => c.classList.remove('selected'));
+      cell.classList.add('selected');
+      selectedDate = {key, label: cell.dataset.label};
+      selectedSlot = null;
+      document.getElementById('dateErr').classList.remove('show');
+      renderSlots();
+    });
+    grid.appendChild(cell);
+  }
+}
+
+function renderSlots(){
+  const holder = document.getElementById('slotHolder');
+  if(!selectedDate){ holder.innerHTML = '<p style="color:#A9B3AD;font-size:14px;">Pick a date first to see open times.</p>'; return; }
+  const groups = [
+    {label:'Morning', times:['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM']},
+    {label:'Afternoon', times:['1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM']},
+    {label:'Evening', times:['5:00 PM','5:30 PM','6:00 PM','6:30 PM','7:00 PM']}
+  ];
+  let seed = hashStr(selectedDoctor.id + selectedDate.key);
+  holder.innerHTML = '';
+  groups.forEach(g => {
+    const wrap = document.createElement('div');
+    wrap.className = 'slot-group';
+    wrap.innerHTML = `<h4>${g.label}</h4>`;
+    const row = document.createElement('div');
+    row.className = 'slot-row';
+    g.times.forEach(t => {
+      seed = (seed * 9301 + 49297) % 233280;
+      const available = (seed / 233280) > 0.32;
+      const chip = document.createElement('button');
+      chip.className = 'slot-chip';
+      chip.textContent = t;
+      chip.disabled = !available;
+      if(available){
+        chip.addEventListener('click', () => {
+          row.parentElement.parentElement.querySelectorAll('.slot-chip').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+          selectedSlot = t;
+          document.getElementById('slotErr').classList.remove('show');
+        });
+      }
+      row.appendChild(chip);
+    });
+    wrap.appendChild(row);
+    holder.appendChild(wrap);
+  });
+}
+
+function hashStr(str){
+  let h = 0;
+  for(let i=0;i<str.length;i++){ h = (h<<5) - h + str.charCodeAt(i); h |= 0; }
+  return Math.abs(h) % 233280 || 17;
+}
+
+document.querySelectorAll('[data-next]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = parseInt(btn.dataset.next, 10);
+    if(currentStep === 2 && !selectedDate){ document.getElementById('dateErr').classList.add('show'); return; }
+    if(currentStep === 3 && !selectedSlot){ document.getElementById('slotErr').classList.add('show'); return; }
+    goToPanel(target);
+  });
+});
+document.querySelectorAll('[data-back]').forEach(btn => {
+  btn.addEventListener('click', () => goToPanel(parseInt(btn.dataset.back, 10)));
+});
+
+function goToPanel(n){
+  currentStep = n;
+  document.querySelectorAll('.flip-panel').forEach(p => {
+    p.classList.toggle('active', parseInt(p.dataset.panel,10) === n);
+  });
+  stepperPips.forEach(pip => {
+    const idx = parseInt(pip.dataset.step,10);
+    pip.classList.remove('active','done');
+    if(idx < n) pip.classList.add('done');
+    if(idx === n) pip.classList.add('active');
+  });
+}
+
+document.getElementById('confirmBtn').addEventListener('click', () => {
+  const name = document.getElementById('pName').value.trim();
+  const age = document.getElementById('pAge').value.trim();
+  const phone = document.getElementById('pPhone').value.trim();
+  if(!name || !age || !phone){
+    document.getElementById('formErr').classList.add('show');
+    return;
+  }
+  document.getElementById('formErr').classList.remove('show');
+  const reason = document.getElementById('pReason').value;
+  const notes = document.getElementById('pNotes').value.trim();
+  const id = 'MQ-' + Math.floor(10000 + Math.random()*89999);
+
+  const appt = {
+    id, name, age, phone, reason, notes,
+    doctor: selectedDoctor, date: selectedDate, slot: selectedSlot
+  };
+  appointments.push(appt);
+
+  document.getElementById('confirmId').textContent = id;
+  document.getElementById('confirmSummary').innerHTML = `
+    <div class="row"><span>Doctor</span><span>${selectedDoctor.name}</span></div>
+    <div class="row"><span>Specialty</span><span>${selectedDoctor.specialty}</span></div>
+    <div class="row"><span>Date</span><span>${selectedDate.label}</span></div>
+    <div class="row"><span>Time</span><span>${selectedSlot}</span></div>
+    <div class="row"><span>Patient</span><span>${name}</span></div>
+  `;
+  goToPanel(5);
+  renderAppointments();
+  showToast('Appointment confirmed — see you then!');
+
+  document.getElementById('icsBtn').onclick = () => downloadIcs(appt);
+});
+
+document.getElementById('bookAnotherBtn').addEventListener('click', () => {
+  bookingSection.classList.remove('visible');
+  document.getElementById('pName').value = '';
+  document.getElementById('pAge').value = '';
+  document.getElementById('pPhone').value = '';
+  document.getElementById('pNotes').value = '';
+  scrollToDoctors();
+});
+
+function downloadIcs(appt){
+  const d = new Date(appt.date.key + 'T00:00:00');
+  const [time, meridiem] = appt.slot.split(' ');
+  let [hh, mm] = time.split(':').map(Number);
+  if(meridiem === 'PM' && hh !== 12) hh += 12;
+  d.setHours(hh, mm, 0, 0);
+  const end = new Date(d.getTime() + 30*60000);
+  const fmt = dt => dt.toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z';
+  const ics = [
+    'BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT',
+    `UID:${appt.id}@mediq.demo`,
+    `DTSTAMP:${fmt(new Date())}`,
+    `DTSTART:${fmt(d)}`,
+    `DTEND:${fmt(end)}`,
+    `SUMMARY:Appointment with ${appt.doctor.name}`,
+    `DESCRIPTION:${appt.doctor.specialty} consultation. Reason: ${appt.reason}. Reference: ${appt.id}`,
+    'END:VEVENT','END:VCALENDAR'
+  ].join('\r\n');
+  const blob = new Blob([ics], {type:'text/calendar'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${appt.id}.ics`;
+  a.click();
+}
+
+function renderAppointments(){
+  const list = document.getElementById('apptList');
+  if(appointments.length === 0){
+    list.innerHTML = '<div class="appt-empty">No appointments yet — book one above and it will show up here.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  appointments.forEach(a => {
+    const row = document.createElement('div');
+    row.className = 'appt-row';
+    row.innerHTML = `
+      <div class="avatar" style="background:${SPECIALTY_COLORS[a.doctor.specialty]}">${a.doctor.initials}</div>
+      <div class="appt-info">
+        <div class="name">${a.doctor.name} <span class="appt-badge">${a.id}</span></div>
+        <div class="meta">${a.date.label} · ${a.slot} · ${a.reason}</div>
+      </div>
+      <button class="cancel-btn">Cancel</button>
+    `;
+    row.querySelector('.cancel-btn').addEventListener('click', () => {
+      appointments = appointments.filter(x => x.id !== a.id);
+      renderAppointments();
+      showToast('Appointment cancelled.');
+    });
+    list.appendChild(row);
+  });
+}
+renderAppointments();
+
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+(function initHero3D(){
+  const canvas = document.getElementById('hero-canvas');
+  const fallback = document.getElementById('heroFallback');
+  if(typeof THREE === 'undefined' || !canvas){
+    fallback.style.display = 'flex';
+    return;
+  }
+  try{
+    const wrap = canvas.parentElement;
+    const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, wrap.clientWidth/wrap.clientHeight, 0.1, 100);
+    camera.position.set(0,0,7);
+
+    function size(){
+      const w = wrap.clientWidth, h = wrap.clientHeight;
+      renderer.setSize(w,h);
+      camera.aspect = w/h;
+      camera.updateProjectionMatrix();
+    }
+    size();
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+
+    const group = new THREE.Group();
+    scene.add(group);
+
+    const core = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(1.7, 1),
+      new THREE.MeshStandardMaterial({color:0x2B6F62, wireframe:true, transparent:true, opacity:0.9})
+    );
+    group.add(core);
+
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(2.5, 0.04, 16, 100),
+      new THREE.MeshStandardMaterial({color:0xE1633F})
+    );
+    ring.rotation.x = Math.PI/2.4;
+    group.add(ring);
+
+    const ring2 = new THREE.Mesh(
+      new THREE.TorusGeometry(2.9, 0.02, 16, 100),
+      new THREE.MeshStandardMaterial({color:0xC9D8D0})
+    );
+    ring2.rotation.x = Math.PI/1.7;
+    ring2.rotation.y = Math.PI/3;
+    group.add(ring2);
+
+    const dotGeo = new THREE.SphereGeometry(0.06, 12, 12);
+    for(let i=0;i<10;i++){
+      const dot = new THREE.Mesh(dotGeo, new THREE.MeshStandardMaterial({color:0x2B6F62}));
+      const a = (i/10) * Math.PI*2;
+      dot.position.set(Math.cos(a)*2.5, Math.sin(a)*2.5*0.4, Math.sin(a)*2.5);
+      group.add(dot);
+    }
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.9);
+    dl.position.set(4,5,6);
+    scene.add(dl);
+
+    let mx = 0, my = 0;
+    wrap.addEventListener('mousemove', e => {
+      const r = wrap.getBoundingClientRect();
+      mx = ((e.clientX - r.left)/r.width - 0.5);
+      my = ((e.clientY - r.top)/r.height - 0.5);
+    });
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function animate(){
+      requestAnimationFrame(animate);
+      if(!reduceMotion){
+        group.rotation.y += 0.0045;
+        group.rotation.x += (my*0.6 - group.rotation.x)*0.04;
+        group.rotation.y += (mx*0.6)*0.002;
+        ring.rotation.z += 0.002;
+      }
+      renderer.render(scene, camera);
+    }
+    animate();
+    window.addEventListener('resize', size);
+  }catch(err){
+    fallback.style.display = 'flex';
+  }
+})();
+</script>
+</body>
+</html>

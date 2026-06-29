@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doctor Appointments</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FAF7F0;
+    --paper-deep: #F1ECE0;
+    --card: #FFFDF9;
+    --ink: #1F2A24;
+    --ink-soft: #5C6B61;
+    --sage: #6B8F71;
+    --sage-deep: #45614A;
+    --coral: #D86A52;
+    --coral-deep: #B8533D;
+    --mist: #E3EAE3;
+    --gold: #B68F22;
+    --line: #CFC6AE;
+    --line-soft: #E4DFCF;
+    --font-display: 'Fraunces', serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .masthead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 18px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .masthead-text .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sage-deep);
+    margin: 0 0 6px;
+  }
+  .masthead-text h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(28px, 4vw, 38px);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .masthead-meta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align: right;
+    line-height: 1.5;
+  }
+  .reset-link {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--coral-deep);
+    background: none;
+    border: none;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  h2.section-title {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2.section-title .count {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ink-soft);
+    background: var(--mist);
+    border-radius: 100px;
+    padding: 2px 9px;
+  }
+
+  section { margin-bottom: 44px; }
+
+  #statusBanner {
+    display: none;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border: 1px solid;
+  }
+  #statusBanner.show { display: block; }
+  #statusBanner.error { background: #FBEAE5; border-color: var(--coral); color: var(--coral-deep); }
+  #statusBanner.info { background: var(--mist); border-color: var(--sage); color: var(--sage-deep); }
+
+  .slip {
+    position: relative;
+    background: var(--card);
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    padding: 22px 22px 18px;
+    box-shadow: 3px 3px 0 var(--line-soft);
+  }
+  .slip::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 0;
+    height: 0;
+    border-top: 2px dashed var(--line);
+  }
+  .slip-hero {
+    padding-bottom: 30px;
+  }
+  .slip-hero::after {
+    content: "";
+    position: absolute;
+    left: -1.5px; right: -1.5px; bottom: 12px;
+    height: 0;
+    border-top: 2px dashed var(--line);
+  }
+  .slip-hero::before { display: none; }
+
+  .stamp {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sage-deep);
+    border: 1.5px solid var(--sage-deep);
+    border-radius: 100px;
+    padding: 3px 10px;
+    transform: rotate(4deg);
+    background: rgba(107,143,113,0.06);
+  }
+  .stamp.today { color: var(--coral-deep); border-color: var(--coral-deep); background: rgba(216,106,82,0.08); }
+  .stamp.done { color: var(--gold); border-color: var(--gold); background: rgba(182,143,34,0.08); }
+  .stamp.cancelled { color: var(--ink-soft); border-color: var(--ink-soft); background: rgba(92,107,97,0.06); text-decoration: line-through; }
+
+  .countdown-row {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--coral-deep);
+    margin-bottom: 6px;
+    padding-right: 90px;
+  }
+  .doctor-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 24px;
+    margin: 0 0 4px;
+    padding-right: 90px;
+  }
+  .specialty {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+  }
+  .datetime-line {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .location-line {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin-bottom: 0;
+  }
+  .notes-line {
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-top: 8px;
+    border-left: 2px solid var(--line);
+    padding-left: 10px;
+  }
+
+  .slip-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .slip-actions button {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    border-radius: 100px;
+    padding: 5px 13px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .slip-actions button:hover { background: var(--ink); color: var(--paper); }
+  .slip-actions button.danger { border-color: var(--coral-deep); color: var(--coral-deep); }
+  .slip-actions button.danger:hover { background: var(--coral-deep); color: var(--paper); }
+
+  .next-up-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .empty-state {
+    border: 1.5px dashed var(--line);
+    border-radius: 4px;
+    padding: 28px 22px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  .empty-state strong { color: var(--ink); display: block; font-family: var(--font-display); font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+
+  .form-card {
+    background: var(--paper-deep);
+    border: 1px solid var(--line-soft);
+    border-radius: 6px;
+    padding: 22px;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 16px;
+  }
+  .form-grid .full { grid-column: 1 / -1; }
+  label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 5px;
+  }
+  input, textarea {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    padding: 9px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: 4px;
+    background: var(--card);
+    color: var(--ink);
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--sage-deep);
+    box-shadow: 0 0 0 3px rgba(107,143,113,0.15);
+  }
+  textarea { resize: vertical; min-height: 56px; }
+  .field-error {
+    font-size: 11.5px;
+    color: var(--coral-deep);
+    margin-top: 4px;
+    display: none;
+  }
+  .field-error.show { display: block; }
+
+  .form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .btn-primary, .btn-ghost {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 100px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: 1.5px solid var(--ink);
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btn-primary:hover { background: var(--sage-deep); border-color: var(--sage-deep); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+  }
+  .btn-ghost:hover { background: var(--mist); }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .card-grid.muted .slip { opacity: 0.7; box-shadow: none; }
+
+  details > summary {
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    list-style: none;
+  }
+  details > summary::-webkit-details-marker { display: none; }
+  details > summary::before {
+    content: "+ ";
+    font-family: var(--font-mono);
+    color: var(--ink-soft);
+  }
+  details[open] > summary::before { content: "− "; }
+
+  .loading-text {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .masthead { flex-direction: column; align-items: flex-start; }
+    .masthead-meta { text-align: left; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+  button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--sage-deep);
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="masthead">
+    <div class="masthead-text">
+      <p class="eyebrow">Personal appointment book</p>
+      <h1>Doctor Appointments</h1>
+    </div>
+    <div class="masthead-meta">
+      <div id="todayLabel"></div>
+      <button class="reset-link" id="resetBtn" type="button">Clear all data</button>
+    </div>
+  </div>
+
+  <div id="statusBanner"></div>
+
+  <section id="nextUpSection">
+    <p class="next-up-label">Next up</p>
+    <div id="nextUp"><p class="loading-text">Loading your appointments…</p></div>
+  </section>
+
+  <section>
+    <h2 class="section-title" id="formTitle">Add an appointment</h2>
+    <div class="form-card">
+      <form id="apptForm" novalidate>
+        <input type="hidden" id="apptId">
+        <div class="form-grid">
+          <div>
+            <label for="doctorName">Doctor's name</label>
+            <input type="text" id="doctorName" placeholder="Dr. Asha Mehta">
+            <p class="field-error" id="err-doctorName">Enter the doctor's name.</p>
+          </div>
+          <div>
+            <label for="specialty">Specialty</label>
+            <input type="text" id="specialty" placeholder="Dentist, cardiologist, etc.">
+          </div>
+          <div>
+            <label for="apptDate">Date</label>
+            <input type="date" id="apptDate">
+            <p class="field-error" id="err-apptDate">Pick a date.</p>
+          </div>
+          <div>
+            <label for="apptTime">Time</label>
+            <input type="time" id="apptTime">
+            <p class="field-error" id="err-apptTime">Pick a time.</p>
+          </div>
+          <div class="full">
+            <label for="location">Clinic / location</label>
+            <input type="text" id="location" placeholder="City Health Clinic, Room 4">
+          </div>
+          <div class="full">
+            <label for="notes">Notes</label>
+            <textarea id="notes" placeholder="Bring reports, fasting required, questions to ask…"></textarea>
+          </div>
+        </div>
+        <div class="form-footer">
+          <button type="button" class="btn-ghost" id="cancelEditBtn" style="display:none;">Cancel edit</button>
+          <button type="submit" class="btn-primary" id="submitBtn">Save appointment</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Upcoming <span class="count" id="upcomingCount">0</span></h2>
+    <div id="upcomingGrid" class="card-grid"></div>
+  </section>
+
+  <section>
+    <details id="pastDetails">
+      <summary>Past & cancelled <span class="count" id="pastCount" style="margin-left:8px;">0</span></summary>
+      <div id="pastGrid" class="card-grid muted"></div>
+    </details>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  const STORAGE_KEY = 'appointments';
+  let appointments = [];
+  let editingId = null;
+
+  const el = (id) => document.getElementById(id);
+  const fmtDateLabel = (d) => d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  const fmtTimeLabel = (d) => d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+
+  function showBanner(message, type) {
+    const b = el('statusBanner');
+    b.textContent = message;
+    b.className = 'show ' + type;
+  }
+  function hideBanner() {
+    el('statusBanner').className = '';
+  }
+
+  el('todayLabel').textContent = 'Today — ' + fmtDateLabel(new Date());
+
+  function apptDateTime(a) {
+    return new Date(`${a.date}T${a.time || '00:00'}`);
+  }
+
+  function startOfDay(d) {
+    const x = new Date(d);
+    x.setHours(0, 0, 0, 0);
+    return x;
+  }
+
+  function countdownLabel(a) {
+    if (a.status === 'completed') return null;
+    if (a.status === 'cancelled') return null;
+    const now = new Date();
+    const dt = apptDateTime(a);
+    const dayDiff = Math.round((startOfDay(dt) - startOfDay(now)) / 86400000);
+    if (dayDiff === 0) return dt < now ? 'Today' : 'Today';
+    if (dayDiff === 1) return 'Tomorrow';
+    if (dayDiff > 1) return `In ${dayDiff} days`;
+    if (dayDiff === -1) return 'Yesterday';
+    return `${Math.abs(dayDiff)} days ago`;
+  }
+
+  function isPast(a) {
+    if (a.status === 'completed' || a.status === 'cancelled') return true;
+    return apptDateTime(a) < new Date(new Date().setHours(0,0,0,0)) ? apptDateTime(a) < new Date() && startOfDay(apptDateTime(a)) < startOfDay(new Date()) : false;
+  }
+
+  function sortAsc(list) {
+    return [...list].sort((x, y) => apptDateTime(x) - apptDateTime(y));
+  }
+  function sortDesc(list) {
+    return [...list].sort((x, y) => apptDateTime(y) - apptDateTime(x));
+  }
+
+  function stampClass(a, isHero) {
+    if (a.status === 'completed') return 'stamp done';
+    if (a.status === 'cancelled') return 'stamp cancelled';
+    const dayDiff = Math.round((startOfDay(apptDateTime(a)) - startOfDay(new Date())) / 86400000);
+    if (dayDiff === 0) return 'stamp today';
+    return 'stamp';
+  }
+
+  function stampText(a) {
+    if (a.status === 'completed') return 'Completed';
+    if (a.status === 'cancelled') return 'Cancelled';
+    return a.specialty ? a.specialty : 'Appointment';
+  }
+
+  function renderSlip(a, isHero) {
+    const dt = apptDateTime(a);
+    const cd = countdownLabel(a);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'slip' + (isHero ? ' slip-hero' : '');
+    wrapper.innerHTML = `
+      <span class="${stampClass(a)}">${escapeHtml(stampText(a))}</span>
+      ${cd ? `<div class="countdown-row">${escapeHtml(cd)}</div>` : ''}
+      <p class="doctor-name">${escapeHtml(a.doctorName)}</p>
+      ${a.specialty ? `<p class="specialty">${escapeHtml(a.specialty)}</p>` : '<p class="specialty">&nbsp;</p>'}
+      <p class="datetime-line">${fmtDateLabel(dt)} · ${fmtTimeLabel(dt)}</p>
+      ${a.location ? `<p class="location-line">${escapeHtml(a.location)}</p>` : ''}
+      ${a.notes ? `<p class="notes-line">${escapeHtml(a.notes)}</p>` : ''}
+      <div class="slip-actions"></div>
+    `;
+    const actions = wrapper.querySelector('.slip-actions');
+
+    if (a.status !== 'completed' && a.status !== 'cancelled') {
+      actions.appendChild(makeBtn('Mark done', () => setStatus(a.id, 'completed')));
+      actions.appendChild(makeBtn('Edit', () => startEdit(a.id)));
+      actions.appendChild(makeBtn('Cancel', () => setStatus(a.id, 'cancelled'), 'danger'));
+    } else {
+      actions.appendChild(makeBtn('Restore', () => setStatus(a.id, 'upcoming')));
+      actions.appendChild(makeBtn('Delete', () => removeAppt(a.id), 'danger'));
+    }
+    return wrapper;
+  }
+
+  function makeBtn(label, onClick, cls) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = label;
+    if (cls) b.classList.add(cls);
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
+  function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str == null ? '' : String(str);
+    return d.innerHTML;
+  }
+
+  function render() {
+    const active = appointments.filter(a => a.status !== 'completed' && a.status !== 'cancelled');
+    const inactive = appointments.filter(a => a.status === 'completed' || a.status === 'cancelled');
+
+    const now = new Date();
+    const upcoming = sortAsc(active.filter(a => apptDateTime(a) >= startOfDay(now) || apptDateTime(a) >= now));
+    const overdueActive = sortAsc(active.filter(a => apptDateTime(a) < startOfDay(now)));
+    const allUpcoming = sortAsc([...overdueActive, ...upcoming]);
+
+    const nextUpEl = el('nextUp');
+    nextUpEl.innerHTML = '';
+    if (allUpcoming.length === 0) {
+      nextUpEl.innerHTML = `<div class="empty-state"><strong>Nothing scheduled</strong>Add your next appointment below and it'll show up here.</div>`;
+    } else {
+      nextUpEl.appendChild(renderSlip(allUpcoming[0], true));
+    }
+
+    const upcomingGrid = el('upcomingGrid');
+    upcomingGrid.innerHTML = '';
+    const restUpcoming = allUpcoming.slice(1);
+    if (restUpcoming.length === 0) {
+      upcomingGrid.innerHTML = `<div class="empty-state">No other appointments on the books.</div>`;
+    } else {
+      restUpcoming.forEach(a => upcomingGrid.appendChild(renderSlip(a, false)));
+    }
+    el('upcomingCount').textContent = restUpcoming.length;
+
+    const pastGrid = el('pastGrid');
+    pastGrid.innerHTML = '';
+    const pastSorted = sortDesc(inactive);
+    if (pastSorted.length === 0) {
+      pastGrid.innerHTML = `<div class="empty-state">Nothing here yet.</div>`;
+    } else {
+      pastSorted.forEach(a => pastGrid.appendChild(renderSlip(a, false)));
+    }
+    el('pastCount').textContent = pastSorted.length;
+  }
+
+  async function loadAppointments() {
+    try {
+      const result = await window.storage.get(STORAGE_KEY, false);
+      appointments = result && result.value ? JSON.parse(result.value) : [];
+    } catch (e) {
+      appointments = [];
+    }
+    render();
+  }
+
+  async function saveAppointments() {
+    try {
+      const result = await window.storage.set(STORAGE_KEY, JSON.stringify(appointments), false);
+      if (!result) {
+        showBanner('Could not save — your last change may not stick around. Try again.', 'error');
+      } else {
+        hideBanner();
+      }
+    } catch (e) {
+      showBanner('Could not save — your last change may not stick around. Try again.', 'error');
+    }
+  }
+
+  function setStatus(id, status) {
+    appointments = appointments.map(a => a.id === id ? { ...a, status } : a);
+    saveAppointments();
+    render();
+  }
+
+  function removeAppt(id) {
+    appointments = appointments.filter(a => a.id !== id);
+    saveAppointments();
+    render();
+  }
+
+  function startEdit(id) {
+    const a = appointments.find(x => x.id === id);
+    if (!a) return;
+    editingId = id;
+    el('apptId').value = id;
+    el('doctorName').value = a.doctorName;
+    el('specialty').value = a.specialty || '';
+    el('apptDate').value = a.date;
+    el('apptTime').value = a.time;
+    el('location').value = a.location || '';
+    el('notes').value = a.notes || '';
+    el('formTitle').textContent = 'Edit appointment';
+    el('submitBtn').textContent = 'Update appointment';
+    el('cancelEditBtn').style.display = 'inline-block';
+    document.getElementById('apptForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function resetForm() {
+    editingId = null;
+    document.getElementById('apptForm').reset();
+    el('apptId').value = '';
+    el('formTitle').textContent = 'Add an appointment';
+    el('submitBtn').textContent = 'Save appointment';
+    el('cancelEditBtn').style.display = 'none';
+    ['doctorName', 'apptDate', 'apptTime'].forEach(f => el('err-' + f).classList.remove('show'));
+  }
+
+  function validate() {
+    let ok = true;
+    const doctorName = el('doctorName').value.trim();
+    const date = el('apptDate').value;
+    const time = el('apptTime').value;
+    if (!doctorName) { el('err-doctorName').classList.add('show'); ok = false; } else { el('err-doctorName').classList.remove('show'); }
+    if (!date) { el('err-apptDate').classList.add('show'); ok = false; } else { el('err-apptDate').classList.remove('show'); }
+    if (!time) { el('err-apptTime').classList.add('show'); ok = false; } else { el('err-apptTime').classList.remove('show'); }
+    return ok;
+  }
+
+  document.getElementById('apptForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!validate()) return;
+
+    const data = {
+      doctorName: el('doctorName').value.trim(),
+      specialty: el('specialty').value.trim(),
+      date: el('apptDate').value,
+      time: el('apptTime').value,
+      location: el('location').value.trim(),
+      notes: el('notes').value.trim(),
+    };
+
+    if (editingId) {
+      appointments = appointments.map(a => a.id === editingId ? { ...a, ...data } : a);
+    } else {
+      appointments.push({ id: 'a' + Date.now() + Math.random().toString(36).slice(2,7), status: 'upcoming', ...data });
+    }
+    saveAppointments();
+    resetForm();
+    render();
+  });
+
+  el('cancelEditBtn').addEventListener('click', resetForm);
+
+  el('resetBtn').addEventListener('click', async function () {
+    if (!confirm('Clear every appointment you\'ve saved? This can\'t be undone.')) return;
+    appointments = [];
+    await saveAppointments();
+    resetForm();
+    render();
+  });
+
+  loadAppointments();
+
+  setInterval(render, 1000 * 60 * 30);
+})();
+</script>
+
+</body>
+</html>

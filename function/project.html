@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doctor Appointment Scheduler</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f7fc;
+}
+
+header{
+background:#2196F3;
+color:white;
+padding:20px;
+text-align:center;
+}
+
+.container{
+width:90%;
+max-width:1000px;
+margin:20px auto;
+}
+
+.card{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+box-shadow:0 2px 10px rgba(76, 10, 230, 0.1);
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+button{
+background:#2196F3;
+color:white;
+border:none;
+padding:10px 20px;
+cursor:pointer;
+border-radius:5px;
+}
+
+button:hover{
+background:#0b7dda;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+table,th,td{
+border:1px solid #ddd;
+}
+
+th,td{
+padding:10px;
+text-align:center;
+}
+
+th{
+background:#2196F3;
+color:white;
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Doctor Appointment Scheduler</h1>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h2>Patient Registration</h2>
+
+<input type="text" id="patientName" placeholder="Enter Patient Name">
+
+<input type="email" id="patientEmail" placeholder="Enter Email">
+
+<button onclick="registerPatient()">Register</button>
+
+<p id="msg"></p>
+</div>
+
+<div class="card">
+<h2>Book Appointment</h2>
+
+<select id="doctor">
+<option value="">Select Doctor</option>
+<option>Dr. Sharma - Cardiologist</option>
+<option>Dr. Patel - Dentist</option>
+<option>Dr. Gupta - Neurologist</option>
+<option>Dr. Singh - Orthopedic</option>
+</select>
+
+<input type="date" id="date">
+
+<input type="time" id="time">
+
+<button onclick="bookAppointment()">Book Appointment</button>
+</div>
+
+<div class="card">
+<h2>Appointment Records</h2>
+
+<table>
+<thead>
+<tr>
+<th>Patient</th>
+<th>Doctor</th>
+<th>Date</th>
+<th>Time</th>
+</tr>
+</thead>
+
+<tbody id="appointmentTable">
+</tbody>
+
+</table>
+</div>
+
+</div>
+
+<script>
+
+let patient = "";
+
+function registerPatient(){
+
+let name = document.getElementById("patientName").value;
+let email = document.getElementById("patientEmail").value;
+
+if(name==="" || email===""){
+alert("Fill all fields");
+return;
+}
+
+patient = name;
+
+document.getElementById("msg").innerHTML =
+"Registered Successfully : " + name;
+
+}
+
+function bookAppointment(){
+
+let doctor =
+document.getElementById("doctor").value;
+
+let date =
+document.getElementById("date").value;
+
+let time =
+document.getElementById("time").value;
+
+if(patient===""){
+alert("Register Patient First");
+return;
+}
+
+if(doctor==="" || date==="" || time===""){
+alert("Fill all appointment details");
+return;
+}
+
+let table =
+document.getElementById("appointmentTable");
+
+let row = table.insertRow();
+
+row.insertCell(0).innerHTML = patient;
+row.insertCell(1).innerHTML = doctor;
+row.insertCell(2).innerHTML = date;
+row.insertCell(3).innerHTML = time;
+
+alert("Appointment Booked Successfully");
+
+}
+
+</script>
+
+</body>
+</html>

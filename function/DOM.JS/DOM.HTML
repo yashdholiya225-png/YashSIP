@@ -1,0 +1,110 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box{
+            display: flex;
+            /* justify-content: space-between; */
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <button class="left">Left</button>
+        <h3>0</h3>
+        <button class="right">right</button>
+    </div>
+   
+
+    <script>
+        const inc = document.querySelector(".left");
+        console.log(inc);
+        const cnt = document.querySelector("h3");
+        console.log(cnt);
+
+        inc.addEventListener("click",() => {
+            cnt.innerHTML = Number(cnt.innerHTML)+
+            console.log(cnt.innerHTML)
+        })
+    </script>
+</body>
+</html> -->
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TodoApp</title>
+</head>
+<body>
+
+  <input class="inp" type="text" placeholder="Enter your task">
+  <button class="btn">ADD</button>
+
+  <script>
+    const inp = document.querySelector(".inp");
+    console.log(inp);
+
+    const btn = document.querySelector(".btn");
+
+    btn.addEventListener("click", () => {
+      console.log(inp.value);
+    });
+  </script>
+
+</body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TodoApp</title>
+</head>
+<body>
+
+    <input class="inp" type="text" placeholder="Enter your task">
+    <button class="btn">ADD</button>
+
+    <ul class="taskList">
+        <li class="taskName">
+            Dancing
+            <span>
+                <button>UP</button>
+                <button>DOWN</button>
+                <button>DEL</button>
+            </span>
+        </li>
+    </ul>
+
+    <script>
+        const inp = document.querySelector('.inp');
+        console.log(inp);
+
+        const btn = document.querySelector('.btn');
+        const taskList = document.querySelector('.taskList');
+
+        btn.addEventListener('click', () => {
+            console.log(inp.value);
+
+            let task = inp.value;
+            let li = document.createElement('li');
+            li.classList.add('taskName');
+            li.innerText = task;
+
+            taskList.appendChild(li);
+
+            inp.value = "";
+        });
+    </script>
+
+</body>
+</html>
