@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Color Changer</title>
+
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body{
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.5s ease;
+            font-family: Arial, sans-serif;
+        }
+
+        .container{
+            text-align: center;
+        }
+
+        h1{
+            margin-bottom: 20px;
+        }
+
+        button{
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            color: white;
+        }
+
+        .red{
+            background: red;
+        }
+
+        .blue{
+            background: blue;
+        }
+
+        .babypink{
+            background: hotpink;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Background Color Changer</h1>
+
+        <button class="red">Red</button>
+        <button class="blue">Blue</button>
+        <button class="babypink">Baby Pink</button>
+    </div>
+
+    <script>
+        const redBtn = document.querySelector(".red");
+        const blueBtn = document.querySelector(".blue");
+        const pinkBtn = document.querySelector(".babypink");
+
+        redBtn.addEventListener("click", function () {
+            document.body.style.backgroundColor = "red";
+        });
+
+        blueBtn.addEventListener("click", function () {
+            document.body.style.backgroundColor = "blue";
+        });
+
+        pinkBtn.addEventListener("click", function () {
+            document.body.style.backgroundColor = "hotpink";
+        });
+    </script>
+
+</body>
+</html>

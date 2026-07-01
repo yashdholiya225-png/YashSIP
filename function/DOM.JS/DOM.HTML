@@ -1,110 +1,75 @@
-<!-- <!DOCTYPE html>
+<DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style>
-        .box{
-            display: flex;
-            /* justify-content: space-between; */
-            gap: 10px;
-        }
-    </style>
 </head>
+
 <body>
-    <div class="box">
-        <button class="left">Left</button>
-        <h3>0</h3>
-        <button class="right">right</button>
-    </div>
-   
-
-    <script>
-        const inc = document.querySelector(".left");
-        console.log(inc);
-        const cnt = document.querySelector("h3");
-        console.log(cnt);
-
-        inc.addEventListener("click",() => {
-            cnt.innerHTML = Number(cnt.innerHTML)+
-            console.log(cnt.innerHTML)
-        })
-    </script>
-</body>
-</html> -->
+    <input class="inp" type="text">
+    <button class="btn">add</button>
+        <!-- <button class="btn">down</button>
+            <button class="btn">del</button> -->
 
 
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TodoApp</title>
-</head>
-<body>
+    <ul class="tasklist">
 
-  <input class="inp" type="text" placeholder="Enter your task">
-  <button class="btn">ADD</button>
-
-  <script>
-    const inp = document.querySelector(".inp");
-    console.log(inp);
-
-    const btn = document.querySelector(".btn");
-
-    btn.addEventListener("click", () => {
-      console.log(inp.value);
-    });
-  </script>
-
-</body>
-</html> -->
-
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>TodoApp</title>
-</head>
-<body>
-
-    <input class="inp" type="text" placeholder="Enter your task">
-    <button class="btn">ADD</button>
-
-    <ul class="taskList">
-        <li class="taskName">
-            Dancing
-            <span>
-                <button>UP</button>
-                <button>DOWN</button>
-                <button>DEL</button>
-            </span>
-        </li>
     </ul>
+
+
 
     <script>
         const inp = document.querySelector('.inp');
-        console.log(inp);
-
         const btn = document.querySelector('.btn');
-        const taskList = document.querySelector('.taskList');
+        const tasklist = document.querySelector('.tasklist');
 
         btn.addEventListener('click', () => {
-            console.log(inp.value);
-
+            console.log(inp.value)
             let task = inp.value;
             let li = document.createElement('li');
-            li.classList.add('taskName');
-            li.innerText = task;
+            li.classList.add('taskname');
+            li.innerHTML = `${task}
+            <span>
+                <button class = "up">up</button>
+                <button class = "down">down</button>
+                <button class = "del">del</button>
+            </span>`
+            tasklist.appendChild(li);
+             li.style.listStyle = "none";
+             
+             inp.value = "";
 
-            taskList.appendChild(li);
+        })
 
-            inp.value = "";
-        });
+
+taskList.addEventListener('click', (ev) => {
+            // console.log(ev.target)
+            let list = ev.target;
+
+            // console.log(list)
+
+            if (list.classList.contains('up')) {
+                let parentElement = list.parentElement.parentElement;
+                console.log(parentElement);
+
+                let previousElement = parentElement.previousElementSibling;
+                console.log(previousElement);
+
+                taskList.insertBefore(parentElement, previousElement);
+            } 
+            else if (list.classList.contains('down')) {
+                let parentElement = list.parentElement.parentElement;
+                console.log(parentElement);
+
+                let nextElement = parentElement.nextElementSibling;
+                console.log(nextElement);
+
+                taskList.insertBefore(nextElement, parentElement);
+            }
+        })
     </script>
-
 </body>
+
 </html>
