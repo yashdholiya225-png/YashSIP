@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Todo Card App</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:url("https://images.unsplash.com/photo-1498050108023-c5249f4df085")
+    no-repeat center center/cover;
+    min-height:100vh;
+}
+
+.overlay{
+    background:rgba(0,0,0,0.6);
+    min-height:100vh;
+    padding:30px;
+}
+
+.container{
+    width:90%;
+    max-width:1200px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    color:white;
+    margin-bottom:30px;
+}
+
+.input-box{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:30px;
+}
+
+.input-box input{
+    width:300px;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    outline:none;
+}
+
+.input-box button{
+    padding:12px 20px;
+    border:none;
+    background:blue;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.todo-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+    justify-content:center;
+}
+
+.card{
+    width:280px;
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 5px 15px rgba(0,0,0,0.4);
+}
+
+.card img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+}
+
+.card-content{
+    padding:20px;
+}
+
+.card-content h3{
+    margin-bottom:10px;
+}
+
+.card-content p{
+    color:gray;
+    margin-bottom:15px;
+}
+
+.buttons{
+    display:flex;
+    justify-content:space-between;
+}
+
+.done-btn{
+    background:green;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.delete-btn{
+    background:red;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.completed{
+    text-decoration:line-through;
+    color:green;
+}
+
+@media(max-width:768px){
+    .input-box{
+        flex-direction:column;
+        align-items:center;
+    }
+
+    .input-box input{
+        width:100%;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="overlay">
+    <div class="container">
+        <h1>My Todo List</h1>
+
+        <div class="input-box">
+            <input type="text" id="taskInput" placeholder="Enter your task">
+            <button onclick="addTask()">Add Task</button>
+        </div>
+
+        <div class="todo-list" id="todoList">
+
+            <!-- Default Card -->
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3" alt="task">
+                <div class="card-content">
+                    <h3>Complete UI Design</h3>
+                    <p>Finish the frontend layout.</p>
+                    <div class="buttons">
+                        <button class="done-btn" onclick="completeTask(this)">Done</button>
+                        <button class="delete-btn" onclick="deleteTask(this)">Delete</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+function addTask(){
+    let input = document.getElementById("taskInput");
+    let taskText = input.value.trim();
+
+    if(taskText === ""){
+        alert("Please enter a task");
+        return;
+    }
+
+    let todoList = document.getElementById("todoList");
+
+    let card = document.createElement("div");
+    card.classList.add("card");
+
+    card.innerHTML = `
+        <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd" alt="task">
+        <div class="card-content">
+            <h3>${taskText}</h3>
+            <p>New task added.</p>
+            <div class="buttons">
+                <button class="done-btn" onclick="completeTask(this)">Done</button>
+                <button class="delete-btn" onclick="deleteTask(this)">Delete</button>
+            </div>
+        </div>
+    `;
+
+    todoList.appendChild(card);
+    input.value = "";
+}
+
+function completeTask(button){
+    let task = button.parentElement.parentElement.querySelector("h3");
+    task.classList.toggle("completed");
+}
+
+function deleteTask(button){
+    let card = button.parentElement.parentElement.parentElement;
+    card.remove();
+}
+</script>
+
+</body>
+</html>
