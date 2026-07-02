@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project World</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .box {
+            background: rgb(20, 197, 197);
+            width: 350px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid gray;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: blue;
+            color: rgb(32, 190, 211);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+            color: blue;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="welcome" class="container">
+        <div class="box">
+            <h2>Welcome to Project World</h2>
+            <p>If already registered: <a onclick="showPage('login')">Sign In</a></p>
+            <p>If new user: <a onclick="showPage('signup')">Sign Up</a></p>
+        </div>
+    </div>
+
+    <div id="login" class="container hidden">
+        <div class="box">
+            <h2>Login Form</h2>
+            <input type="email" placeholder="Email" required><br>
+            <input type="password" placeholder="Password" required><br>
+            <button onclick="showPage('dashboard')">Login</button>
+        </div>
+    </div>
+
+    <div id="signup" class="container hidden">
+        <div class="box">
+            <h2>Registration Form</h2>
+            <input type="text" placeholder="Name" required><br>
+            <input type="text" placeholder="Phone No" required><br>
+            <input type="email" placeholder="Email ID" required><br>
+            <input type="password" placeholder="Password" required><br>
+            <button onclick="showPage('dashboard')">Submit</button>
+        </div>
+    </div>
+
+    <div id="dashboard" class="container hidden">
+        <div class="box">
+            <h2>Project World</h2>
+            <p>Welcome to your dashboard!</p>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.container').forEach(page => {
+                page.classList.add('hidden');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+    </script>
+
+</body>
+</html>
